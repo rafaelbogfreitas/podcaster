@@ -15,7 +15,9 @@ const Player = () => {
       <footer>
         <div className={styles.progress}>
           <span>00:00</span>
-          <div className={styles.emptySlider} />
+          <div className={styles.slider}>
+            <div className={styles.emptySlider} />
+          </div>
           <span>00:00</span>
         </div>
         <div className={styles.buttons}>
@@ -31,7 +33,7 @@ const Player = () => {
           <button type="button">
             <img src="/play-next.svg" alt="Tocar próxima" />
           </button>
-          <button type="button" className={styles.playButton}>
+          <button type="button">
             <img src="/repeat.svg" alt="Repetir" />
           </button>
         </div>
