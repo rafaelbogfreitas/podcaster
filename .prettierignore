@@ -1,0 +1,13 @@
+*.html
+node_modules/
+.next/
+public/
+server.json
+tsconfig.json
+next-env.d.ts
+package-lock.json
+package.json
+.gitignore
+.prettierignore
+.prettierrc
+.eslintrc.json
