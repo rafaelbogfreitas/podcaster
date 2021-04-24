@@ -1,45 +1,50 @@
-import styles from "./style.module.scss";
+import { useContext } from 'react';
+import { PlayerContext } from '../../contexts/PlayerContext';
+import styles from './style.module.scss';
 
 const Player = () => {
-  return (
-    <div className={styles.playerContainer}>
-      <header>
-        <img src="/playing.svg" alt="Tocando agora" />
-        <strong>Tocando agora</strong>
-      </header>
+    const { currentEpisodeIndex, episodesList } = useContext(PlayerContext);
+    const episode = episodesList[currentEpisodeIndex];
 
-      <div className={styles.emptyPlaylist}>
-        <strong>Selecione um podcast para ouvir</strong>
-      </div>
+    return (
+        <div className={styles.playerContainer}>
+            <header>
+                <img src="/playing.svg" alt="Tocando agora" />
+                <strong>Tocando agora {episode?.title}</strong>
+            </header>
 
-      <footer>
-        <div className={styles.progress}>
-          <span>00:00</span>
-          <div className={styles.slider}>
-            <div className={styles.emptySlider} />
-          </div>
-          <span>00:00</span>
+            <div className={styles.emptyPlaylist}>
+                <strong>Selecione um podcast para ouvir</strong>
+            </div>
+
+            <footer>
+                <div className={styles.progress}>
+                    <span>00:00</span>
+                    <div className={styles.slider}>
+                        <div className={styles.emptySlider} />
+                    </div>
+                    <span>00:00</span>
+                </div>
+                <div className={styles.buttons}>
+                    <button type="button">
+                        <img src="/shuffle.svg" alt="Embaralhar" />
+                    </button>
+                    <button type="button">
+                        <img src="/play-previous.svg" alt="Tocar anterior" />
+                    </button>
+                    <button type="button" className={styles.playButton}>
+                        <img src="/play.svg" alt="Tocar" />
+                    </button>
+                    <button type="button">
+                        <img src="/play-next.svg" alt="Tocar próxima" />
+                    </button>
+                    <button type="button">
+                        <img src="/repeat.svg" alt="Repetir" />
+                    </button>
+                </div>
+            </footer>
         </div>
-        <div className={styles.buttons}>
-          <button type="button">
-            <img src="/shuffle.svg" alt="Embaralhar" />
-          </button>
-          <button type="button">
-            <img src="/play-previous.svg" alt="Tocar anterior" />
-          </button>
-          <button type="button" className={styles.playButton}>
-            <img src="/play.svg" alt="Tocar" />
-          </button>
-          <button type="button">
-            <img src="/play-next.svg" alt="Tocar próxima" />
-          </button>
-          <button type="button">
-            <img src="/repeat.svg" alt="Repetir" />
-          </button>
-        </div>
-      </footer>
-    </div>
-  );
+    );
 };
 
 export default Player;
