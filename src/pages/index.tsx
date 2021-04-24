@@ -7,6 +7,8 @@ import api from '../services/api';
 import convertDateToTimeString from '../utils/convertDateToTimeString';
 
 import styles from './home.module.scss';
+import { useContext } from 'react';
+import { PlayerContext } from '../contexts/PlayerContext';
 
 type HomeProps = {
     allEpisodes: Episode[];
@@ -41,6 +43,7 @@ interface EpisodeFromApi {
 }
 
 export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
+    const { play } = useContext(PlayerContext);
     return (
         <div className={styles.homepage}>
             <section className={styles.latestEpisodes}>
@@ -64,7 +67,7 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                                 <span>{episode.durationAsString}</span>
                             </div>
 
-                            <button type="button">
+                            <button type="button" onClick={() => play(episode)}>
                                 <img src="/play-green.svg" alt="play button" />
                             </button>
                         </li>
@@ -98,9 +101,7 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                                 </td>
                                 <td>
                                     <Link href={`/episodes/${episode.id}`}>
-                                        <a>
-                                            {episode.title}
-                                        </a>
+                                        <a>{episode.title}</a>
                                     </Link>
                                 </td>
                                 <td>{episode.members}</td>
@@ -109,7 +110,10 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                                 </td>
                                 <td>{episode.durationAsString}</td>
                                 <td>
-                                    <button type="button">
+                                    <button
+                                        type="button"
+                                        onClick={() => play(episode)}
+                                    >
                                         <img
                                             src="/play-green.svg"
                                             alt="Tocar podcast"
