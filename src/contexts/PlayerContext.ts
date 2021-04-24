@@ -4,13 +4,14 @@ type Episode = {
     title: string;
     members: string;
     thumbnail: string;
-    duration: string;
+    duration: number;
     url: string;
 };
 
 type PlayerContextData = {
     episodesList: Array<Episode>;
     currentEpisodeIndex: number;
+    play: (episode: Episode) => void;
 };
 
-export const PlayerContext = createContext('');
+export const PlayerContext = createContext({} as PlayerContextData);
