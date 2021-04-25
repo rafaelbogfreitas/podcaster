@@ -7,6 +7,8 @@ import ptBR from 'date-fns/locale/pt-BR';
 import api from '../../services/api';
 import convertDateToTimeString from '../../utils/convertDateToTimeString';
 
+import { usePlayer } from '../../contexts/PlayerContext';
+
 import styles from './episode.module.scss';
 
 type EpisodeProps = {
@@ -42,6 +44,7 @@ interface EpisodeFromApi {
 
 const Episode = ({ episode }: EpisodeProps) => {
     const router = useRouter();
+    const { play } = usePlayer();
 
     return (
         <div className={styles.episode}>
@@ -57,7 +60,7 @@ const Episode = ({ episode }: EpisodeProps) => {
                     objectFit="cover"
                     src={episode.thumbnail}
                 />
-                <button type="button">
+                <button type="button" onClick={() => play(episode)}>
                     <img src="/play.svg" alt="Tocar episódio" />
                 </button>
             </div>

@@ -23,7 +23,7 @@
   }
 
   footer {
-    &.empty {
+    &.empty .progress{
       align-self: stretch;
       opacity: 0.5;
     }

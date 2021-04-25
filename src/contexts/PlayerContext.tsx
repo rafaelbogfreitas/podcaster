@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 type Episode = {
     title: string;
@@ -15,15 +15,22 @@ type PlayerContextData = {
     play: (episode: Episode) => void;
     togglePlay: () => void;
     setPlayingState: (state: boolean) => void;
+    playlist: (episodeList: Episode[], episodeIndex: number) => void;
+    hasNext: boolean;
+    hasPrevious: boolean;
+    playNext: () => void;
+    playPrevious: () => void;
 };
 
 type PlayerContextProviderProps = {
-    children: ReactNode
-}
+    children: ReactNode;
+};
 
-export const PlayerContext = createContext({} as PlayerContextData);
+const PlayerContext = createContext({} as PlayerContextData);
 
-export function PlayerContextProvider({ children }: PlayerContextProviderProps) {
+export function PlayerContextProvider({
+    children,
+}: PlayerContextProviderProps) {
     const [episodesList, setEpisodeList] = useState([]);
     const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -31,6 +38,12 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
     function play(episode: Episode) {
         setEpisodeList([episode]);
         setCurrentEpisodeIndex(0);
+        setIsPlaying(true);
+    }
+
+    function playlist(episodeList: Episode[], episodeIndex: number) {
+        setEpisodeList(episodeList);
+        setCurrentEpisodeIndex(episodeIndex);
         setIsPlaying(true);
     }
 
@@ -42,6 +55,21 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
         setIsPlaying(state);
     }
 
+    const hasNext = (currentEpisodeIndex + 1) < episodesList.length;
+    const hasPrevious = currentEpisodeIndex > 0;
+
+    function playNext() {
+        if (hasNext) {
+            setCurrentEpisodeIndex(currentEpisodeIndex + 1);
+        }
+    }
+
+    function playPrevious() {
+        if (hasPrevious) {
+            setCurrentEpisodeIndex(currentEpisodeIndex - 1);
+        }
+    }
+
     return (
         <PlayerContext.Provider
             value={{
@@ -51,10 +79,16 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
                 isPlaying,
                 togglePlay,
                 setPlayingState,
+                playlist,
+                playNext,
+                playPrevious,
+                hasNext,
+                hasPrevious,
             }}
         >
             {children}
         </PlayerContext.Provider>
     );
-};
+}
 
+export const usePlayer = () => useContext(PlayerContext);
