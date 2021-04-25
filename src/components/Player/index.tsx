@@ -13,8 +13,10 @@ const Player = () => {
         episodesList,
         isPlaying,
         isLooping,
+        isShuffling,
         togglePlay,
         toggleLoop,
+        toggleShuffle,
         setPlayingState,
         playNext,
         playPrevious,
@@ -84,7 +86,12 @@ const Player = () => {
                     ></audio>
                 )}
                 <div className={styles.buttons}>
-                    <button type="button" disabled={!episode}>
+                    <button
+                        type="button"
+                        onClick={toggleShuffle}
+                        className={isShuffling && styles.isActive}
+                        disabled={!episode || episodesList.length == 1}
+                    >
                         <img src="/shuffle.svg" alt="Embaralhar" />
                     </button>
                     <button
