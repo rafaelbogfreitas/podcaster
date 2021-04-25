@@ -1,13 +1,15 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import Slider from 'rc-slider';
 import { usePlayer } from '../../contexts/PlayerContext';
 
 import 'rc-slider/assets/index.css';
 import styles from './style.module.scss';
+import convertDateToTimeString from '../../utils/convertDateToTimeString';
 
-const Player = () => {
+export default function Player() {
     const audioRef = useRef<HTMLAudioElement>(null);
+    const [progress, setProgress] = useState(0);
     const {
         currentEpisodeIndex,
         episodesList,
@@ -22,6 +24,7 @@ const Player = () => {
         playPrevious,
         hasPrevious,
         hasNext,
+        clearPlayerState,
     } = usePlayer();
 
     const episode = episodesList[currentEpisodeIndex];
@@ -31,6 +34,26 @@ const Player = () => {
             isPlaying ? audioRef.current.play() : audioRef.current.pause();
         }
     }, [isPlaying]);
+
+    function setUpProgressListener() {
+        audioRef.current.currentTime = 0;
+        audioRef.current.addEventListener('timeupdate', () => {
+            setProgress(audioRef.current.currentTime);
+        });
+    }
+
+    function handleSeek(amount: number) {
+        audioRef.current.currentTime = amount;
+        setProgress(amount);
+    }
+
+    function handleEpisodeEnded() {
+        if(hasNext) {
+            playNext()
+        } else {
+            clearPlayerState()
+        }
+    }
 
     return (
         <div className={styles.playerContainer}>
@@ -57,10 +80,13 @@ const Player = () => {
 
             <footer className={!episode ? styles.empty : ''}>
                 <div className={styles.progress}>
-                    <span>00:00</span>
+                    <span>{convertDateToTimeString(progress)}</span>
                     <div className={styles.slider}>
                         {episode ? (
                             <Slider
+                                max={episode.duration}
+                                value={progress}
+                                onChange={handleSeek}
                                 trackStyle={{ backgroundColor: '#84d361' }}
                                 railStyle={{ backgroundColor: '#9f75ff' }}
                                 handleStyle={{
@@ -72,24 +98,28 @@ const Player = () => {
                             <div className={styles.emptySlider} />
                         )}
                     </div>
-                    <span>00:00</span>
+                    <span>
+                        {convertDateToTimeString(episode?.duration ?? 0)}
+                    </span>
                 </div>
 
                 {episode && (
                     <audio
+                        ref={audioRef}
+                        loop={isLooping}
                         src={episode.url}
                         autoPlay
-                        ref={audioRef}
+                        onEnded={handleEpisodeEnded}
                         onPlay={() => setPlayingState(true)}
                         onPause={() => setPlayingState(false)}
-                        loop={isLooping}
-                    ></audio>
+                        onLoadedMetadata={setUpProgressListener}
+                    />
                 )}
                 <div className={styles.buttons}>
                     <button
                         type="button"
                         onClick={toggleShuffle}
-                        className={isShuffling && styles.isActive}
+                        className={isShuffling ? styles.isActive : ''}
                         disabled={!episode || episodesList.length == 1}
                     >
                         <img src="/shuffle.svg" alt="Embaralhar" />
@@ -123,7 +153,7 @@ const Player = () => {
                     <button
                         type="button"
                         onClick={toggleLoop}
-                        className={isLooping && styles.isActive}
+                        className={isLooping ? styles.isActive : ''}
                         disabled={!episode}
                     >
                         <img src="/repeat.svg" alt="Repetir" />
@@ -134,4 +164,3 @@ const Player = () => {
     );
 };
 
-export default Player;

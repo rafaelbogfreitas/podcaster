@@ -1,4 +1,5 @@
 import { GetStaticProps } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
@@ -47,6 +48,9 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
     const episodesList = [...allEpisodes, ...latestEpisodes];
     return (
         <div className={styles.homepage}>
+            <Head>
+                <title>Home || Podcaster</title>
+            </Head>
             <section className={styles.latestEpisodes}>
                 <h2>Últimos lançamentos</h2>
                 <ul>
@@ -68,7 +72,10 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                                 <span>{episode.durationAsString}</span>
                             </div>
 
-                            <button type="button" onClick={() => playlist(episodesList, i)}>
+                            <button
+                                type="button"
+                                onClick={() => playlist(episodesList, i)}
+                            >
                                 <img src="/play-green.svg" alt="play button" />
                             </button>
                         </li>
@@ -113,7 +120,12 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                                 <td>
                                     <button
                                         type="button"
-                                        onClick={() => playlist(episodesList, i + latestEpisodes.length)}
+                                        onClick={() =>
+                                            playlist(
+                                                episodesList,
+                                                i + latestEpisodes.length
+                                            )
+                                        }
                                     >
                                         <img
                                             src="/play-green.svg"
