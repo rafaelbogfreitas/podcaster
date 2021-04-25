@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -48,6 +49,9 @@ const Episode = ({ episode }: EpisodeProps) => {
 
     return (
         <div className={styles.episode}>
+            <Head>
+                <title>{episode.title} || Podcaster</title>
+            </Head>
             <div className={styles.thumbnailContainer}>
                 <Link href="/">
                     <button type="button">
@@ -81,20 +85,20 @@ const Episode = ({ episode }: EpisodeProps) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const {data} = await api.get<Episode[]>('episodes', {
+    const { data } = await api.get<Episode[]>('episodes', {
         params: {
             _limit: 2,
             _sort: 'published_at',
             _order: 'desc',
-        }
+        },
     });
 
-    const paths = data.map(episode => {
+    const paths = data.map((episode) => {
         return {
             params: {
                 episodeName: episode.id,
-            }
-        }
+            },
+        };
     });
 
     return {

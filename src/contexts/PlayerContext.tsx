@@ -24,6 +24,7 @@ type PlayerContextData = {
     hasPrevious: boolean;
     playNext: () => void;
     playPrevious: () => void;
+    clearPlayerState: () => void;
 };
 
 type PlayerContextProviderProps = {
@@ -39,7 +40,7 @@ export function PlayerContextProvider({
     const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLooping, setIsLooping] = useState(false);
-    const [isShuffling,setIsShuffling] = useState(false);
+    const [isShuffling, setIsShuffling] = useState(false);
 
     function play(episode: Episode) {
         setEpisodeList([episode]);
@@ -56,11 +57,11 @@ export function PlayerContextProvider({
     function togglePlay() {
         setIsPlaying(!isPlaying);
     }
-    
+
     function toggleLoop() {
         setIsLooping(!isLooping);
     }
-    
+
     function toggleShuffle() {
         setIsShuffling(!isShuffling);
     }
@@ -69,12 +70,15 @@ export function PlayerContextProvider({
         setIsPlaying(state);
     }
 
-    const hasNext = (currentEpisodeIndex + 1) < episodesList.length;
+    const hasNext =
+        isShuffling || currentEpisodeIndex + 1 < episodesList.length;
     const hasPrevious = currentEpisodeIndex > 0;
 
     function playNext() {
-        if(isShuffling) {
-            const nextRandomIndex = Math.floor(Math.random() * episodesList.length)
+        if (isShuffling) {
+            const nextRandomIndex = Math.floor(
+                Math.random() * episodesList.length
+            );
             setCurrentEpisodeIndex(nextRandomIndex);
         } else if (hasNext) {
             setCurrentEpisodeIndex(currentEpisodeIndex + 1);
@@ -85,6 +89,11 @@ export function PlayerContextProvider({
         if (hasPrevious) {
             setCurrentEpisodeIndex(currentEpisodeIndex - 1);
         }
+    }
+
+    function clearPlayerState() {
+        setEpisodeList([]);
+        setCurrentEpisodeIndex(0);
     }
 
     return (
@@ -105,6 +114,7 @@ export function PlayerContextProvider({
                 playPrevious,
                 hasNext,
                 hasPrevious,
+                clearPlayerState,
             }}
         >
             {children}
