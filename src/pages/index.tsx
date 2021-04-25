@@ -7,8 +7,7 @@ import api from '../services/api';
 import convertDateToTimeString from '../utils/convertDateToTimeString';
 
 import styles from './home.module.scss';
-import { useContext } from 'react';
-import { PlayerContext } from '../contexts/PlayerContext';
+import { usePlayer } from '../contexts/PlayerContext';
 
 type HomeProps = {
     allEpisodes: Episode[];
@@ -43,7 +42,9 @@ interface EpisodeFromApi {
 }
 
 export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
-    const { play } = useContext(PlayerContext);
+    const { playlist } = usePlayer();
+
+    const episodesList = [...allEpisodes, ...latestEpisodes];
     return (
         <div className={styles.homepage}>
             <section className={styles.latestEpisodes}>
@@ -67,7 +68,7 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                                 <span>{episode.durationAsString}</span>
                             </div>
 
-                            <button type="button" onClick={() => play(episode)}>
+                            <button type="button" onClick={() => playlist(episodesList, i)}>
                                 <img src="/play-green.svg" alt="play button" />
                             </button>
                         </li>
@@ -88,7 +89,7 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                         </tr>
                     </thead>
                     <tbody>
-                        {allEpisodes.map((episode) => (
+                        {allEpisodes.map((episode, i) => (
                             <tr key={episode.id}>
                                 <td>
                                     <Image
@@ -112,7 +113,7 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                                 <td>
                                     <button
                                         type="button"
-                                        onClick={() => play(episode)}
+                                        onClick={() => playlist(episodesList, i + latestEpisodes.length)}
                                     >
                                         <img
                                             src="/play-green.svg"
